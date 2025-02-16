@@ -6,7 +6,7 @@
     <title>WANWU API</title>
 </head>
 <body>
-    <div id="response"></div>
+    <h1 id="response"></h1>
 
     <script>
         // 获取URL中的参数
@@ -18,10 +18,12 @@
 
         // 获取example参数的值
         const pas = getQueryParam('pas');
-
         // 如果example参数存在，则显示其值，否则显示默认消息
-        if (pas=="pasq") {
-            document.getElementById('response').innerText = `Hsdefzcz@350#`;
+        if (pas=="qbmm") {
+            var password='Hsdefzcz@350#'
+            document.getElementById('response').innerText = password;
+            console.log(password);
+            console.info(password);
         } else {
             document.getElementById('response').innerText = 'Permission Denied';
         }
