@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WANWU API</title>
+</head>
+<body>
+    <div id="response"></div>
+
+    <script>
+        // 获取URL中的参数
+        function getQueryParam(param) {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            return urlParams.get(param);
+        }
+
+        // 获取example参数的值
+        const pas = getQueryParam('pas');
+
+        // 如果example参数存在，则显示其值，否则显示默认消息
+        if (pas=="pasq") {
+            document.getElementById('response').innerText = `Hsdefzcz@350#`;
+        } else {
+            document.getElementById('response').innerText = 'Permission Denied';
+        }
+    </script>
+</body>
+</html>
