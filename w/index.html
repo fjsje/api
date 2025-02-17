@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今日天气</title>
+<style>
+body {
+font-family: 'Arial', sans-serif;
+background: url('https://images.unsplash.com/photo-1519681393784-d12026793340.jpg?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80') no-repeat center center fixed;
+background-size: cover;
+color: #fff;
+margin: 0;
+padding: 0;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+font-weight: 300;
+}
+.weather-container {
+background: rgba(0, 0, 0, 0.6);
+padding: 20px;
+border-radius: 10px;
+text-align: center;
+max-width: 400px;
+width: 100%;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.weather-container h1 {
+margin: 0 0 10px;
+font-size: 24px;
+font-weight: 600;
+}
+.weather-container .city {
+font-size: 20px;
+font-weight: 600;
+}
+.weather-container .temperature {
+font-size: 28px;
+color: #ff6347;
+}
+.weather-container .description {
+font-size: 18px;
+color: #f0f0f0;
+}
+.weather-container .details {
+display: flex;
+justify-content: space-between;
+margin-top: 10px;
+}
+.weather-container .details span {
+font-size: 14px;
+color: #d0d0d0;
+}
+.weather-container .date-time {
+font-size: 14px;
+color: #a0a0a0;
+margin-top: 10px;
+}
+.weather-icon {
+width: 60px;
+height: 60px;
+margin: 10px auto;
+}
+</style>
+</head>
+<body>
+<div class="weather-container" id="weatherResult">
+<h1>今日天气</h1>
+<div class="city" id="city"></div>
+<div class="date-time" id="dateTime"></div>
+< img src="" alt="Weather Icon" class="weather-icon" id="weatherIcon">
+<div class="temperature" id="temperature"></div>
+<div class="description" id="description"></div>
+<div class="details">
+<span id="humidity">湿度：--%</span>
+<span id="windSpeed">风速：-- m/s</span>
+</div>
+</div>
+
+<script>
+// 替换为你的OpenWeatherMap API密钥
+const apiKey = "a565f763ad2652f45c189f3af5bf621f";
+const weatherApiUrl = "https://api.openweathermap.org/data/2.5/weather";
+
+// 获取当前日期和时间
+function updateDateTime() {
+const now = new Date();
+const dateTime = now.toLocaleString();
+document.getElementById("dateTime").innerText = `日期和时间：${dateTime}`;
+}
+
+// 获取天气图标
+function getWeatherIcon(description) {
+const icons = {
+"clear sky": "https://openweathermap.org/img/wn/01d@2x.png",
+"few clouds": "https://openweathermap.org/img/wn/02d@2x.png",
+"scattered clouds": "https://openweathermap.org/img/wn/03d@2x.png",
+"broken clouds": "https://openweathermap.org/img/wn/04d@2x.png",
+"shower rain": "https://openweathermap.org/img/wn/09d@2x.png",
+"rain": "https://openweathermap.org/img/wn/10d@2x.png",
+"thunderstorm": "https://openweathermap.org/img/wn/11d@2x.png",
+"snow": "https://openweathermap.org/img/wn/13d@2x.png",
+"mist": "https://openweathermap.org/img/wn/50d@2x.png"
+};
+return icons[description] || "https://openweathermap.org/img/wn/50d@2x.png";
+}
+
+// 页面加载时自动获取当前位置天气
+window.onload = () => {
+updateDateTime(); // 显示当前日期和时间
+setInterval(updateDateTime, 60000); // 每分钟更新一次
+
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(position => {
+const { latitude, longitude } = position.coords;
+const url = `${weatherApiUrl}?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=zh_cn`;
+fetchWeather(url);
+}, error => {
+console.error("Error:", error);
+document.getElementById("weatherResult").innerHTML = `<p style="color: red;">无法获取位置信息，请检查权限设置。</p >`;
+});
+} else {
+document.getElementById("weatherResult").innerHTML = `<p style="color: red;">浏览器不支持地理位置功能。</p >`;
+}
+};
+
+// 通用的天气获取函数
+function fetchWeather(url) {
+fetch(url)
+.then(response => {
+if (!response.ok) {
+throw new Error("无法获取天气信息");
+}
+return response.json();
+})
+.then(data => {
+const city = data.name || "当前位置";
+const temperature = data.main.temp;
+const description = data.weather[0].description;
+const humidity = data.main.humidity;
+const windSpeed = data.wind.speed;
+const iconUrl = getWeatherIcon(description);
+
+document.getElementById("city").innerText = city;
+document.getElementById("temperature").innerText = `${temperature}°C`;
+document.getElementById("description").innerText = description;
+document.getElementById("humidity").innerText = `湿度：${humidity}%`;
+document.getElementById("windSpeed").innerText = `风速：${windSpeed} m/s`;
+document.getElementById("weatherIcon").src = iconUrl;
+})
+.catch(error => {
+console.error("Error:", error);
+document.getElementById("weatherResult").innerHTML = `<p style="color: red;">${error.message}</p >`;
+});
+}
+</script>
+</body>
+</html>
